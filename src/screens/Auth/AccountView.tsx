@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { Text, Avatar, Divider, IconButton } from 'react-native-paper';
+import { useUser } from '../../context/UserContext';
 
 type Props = {
   navigation: any;
@@ -8,9 +9,19 @@ type Props = {
 };
 
 const AccountView = ({ navigation, route }: Props) => {
-  const [username, setUsername] = useState('Harry');
-  const [email, setEmail] = useState('hmin44851@gmail.com');
+  const { email: userEmail, username: userName } = useUser();
+  const [username, setUsername] = useState(userName || '');
+  const [email, setEmail] = useState(userEmail || '');
   const [menuVisible, setMenuVisible] = useState(false);
+
+  useEffect(() => {
+    if (userEmail) {
+      setEmail(userEmail);
+    }
+    if (userName) {
+      setUsername(userName);
+    }
+  }, [userEmail, userName]);
 
   useEffect(() => {
     if (route.params?.username) {
@@ -27,7 +38,7 @@ const AccountView = ({ navigation, route }: Props) => {
 
   const handleEditProfile = () => {
     setMenuVisible(false);
-    navigation.navigate('EditProfile', { username, email });
+    navigation.navigate('EditProfile');
   };
 
   const handleHistory = () => {

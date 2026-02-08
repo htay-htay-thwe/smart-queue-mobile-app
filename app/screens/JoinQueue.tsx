@@ -4,7 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useRef } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-export default function JoinQueue() {
+export default function JoinQueue() 
+{
   const navigation = useNavigation();
   const route = useRoute();
   const restaurant = (route.params as any)?.restaurant;
@@ -33,7 +34,8 @@ export default function JoinQueue() {
     }
 
     // Navigate to Display screen with queue data
-    (navigation.navigate as any)('QueueConfirm', {
+    // @ts-expect-error - Navigation types not properly configured
+    navigation.navigate('QueueConfirm', {
       queueData: {
         restaurant,
         name,

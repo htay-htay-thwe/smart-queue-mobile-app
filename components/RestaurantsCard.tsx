@@ -13,7 +13,7 @@ export default function RestaurantsCard({ restaurant }: Props) {
   const navigation = useNavigation();
 
   const handleJoinQueue = () => {
-       navigation.navigate("Screens", { screen: "JoinQueue", params: { restaurant } });
+       (navigation.navigate as any)("JoinQueue", { restaurant });
   };
 
   return (

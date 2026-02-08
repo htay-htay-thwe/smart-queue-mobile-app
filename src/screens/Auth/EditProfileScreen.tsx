@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Image, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextInput, Button, Text, IconButton } from 'react-native-paper';
+import { useUser } from '../../context/UserContext';
 
 type Props = {
   navigation: any;
@@ -8,21 +9,25 @@ type Props = {
 };
 
 const EditProfileScreen = ({ navigation, route }: Props) => {
-  const [username, setUsername] = useState('Harry');
-  const [email, setEmail] = useState('hmin44851@gmail.com');
-  const [phoneNumber, setPhoneNumber] = useState('+66 12345678');
-  const [password, setPassword] = useState('12345678');
+  const { email: userEmail, username: userName, password: userPassword } = useUser();
+  const [username, setUsername] = useState(userName || '');
+  const [email, setEmail] = useState(userEmail || '');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState(userPassword || '');
   const [showPassword, setShowPassword] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
 
   useEffect(() => {
-    if (route.params?.username) {
-      setUsername(route.params.username);
+    if (userEmail) {
+      setEmail(userEmail);
     }
-    if (route.params?.email) {
-      setEmail(route.params.email);
+    if (userName) {
+      setUsername(userName);
     }
-  }, [route.params]);
+    if (userPassword) {
+      setPassword(userPassword);
+    }
+  }, [userEmail, userName, userPassword]);
 
   const handleUpdate = () => {
     // Handle update logic here
@@ -33,8 +38,8 @@ const EditProfileScreen = ({ navigation, route }: Props) => {
         text: 'OK', 
         onPress: () => {
           setIsUpdated(true);
-          // Navigate back to AccountView with updated data
-          navigation.navigate('AccountView', { username, email });
+          // Navigate back to Account with updated data
+          navigation.navigate('Account', { username, email });
         }
       }]
     );
@@ -98,7 +103,7 @@ const EditProfileScreen = ({ navigation, route }: Props) => {
           <Text style={styles.label}>Email</Text>
           <TextInput
             mode="outlined"
-            placeholder="hmin44851@gmail.com"
+            placeholder="Enter email address"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"

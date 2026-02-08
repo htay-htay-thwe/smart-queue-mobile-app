@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, ScrollView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { TextInput, Button, Text, IconButton } from 'react-native-paper';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useUser } from '../../context/UserContext';
 
 type RootStackParamList = {
   Login: undefined;
@@ -17,6 +18,26 @@ type Props = {
 const LoginScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const { setEmail: setUserEmail, setUsername, setPassword: setUserPassword } = useUser();
+
+  const handleLogin = () => {
+    if (!email.trim()) {
+      setErrorMessage('Please enter your email address');
+      return;
+    }
+    if (!password.trim()) {
+      setErrorMessage('Please enter your password');
+      return;
+    }
+    
+    setErrorMessage('');
+    setUserEmail(email);
+    const username = email.split('@')[0];
+    setUsername(username);
+    setUserPassword(password);
+    navigation.navigate("Home" as never);
+  };
 
   return (
     <KeyboardAvoidingView
@@ -65,12 +86,19 @@ const LoginScreen = ({ navigation }: Props) => {
             </View>
 
             {/* Inputs */}
+            {errorMessage ? (
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            ) : null}
+
             <TextInput
               placeholder="Email address"
               placeholderTextColor="#A1A4B2"
               textColor="#000"
               value={email}
-              onChangeText={setEmail}
+              onChangeText={(text) => {
+                setEmail(text);
+                setErrorMessage('');
+              }}
               mode="flat"
               style={styles.input}
               underlineColor="transparent"
@@ -82,23 +110,22 @@ const LoginScreen = ({ navigation }: Props) => {
               placeholderTextColor="#A1A4B2"
               textColor="#000"
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) => {
+                setPassword(text);
+                setErrorMessage('');
+              }}
               secureTextEntry
               mode="flat"
               style={styles.input}
               underlineColor="transparent"
               returnKeyType="done"
-              onSubmitEditing={Keyboard.dismiss}
+              onSubmitEditing={handleLogin}
             />
 
             <Button
               mode="contained"
               style={styles.loginBtn}
-              onPress={() =>
-                navigation.navigate("Screens" as never, {
-                  screen: "HomePage",
-                } as never)
-              }
+              onPress={handleLogin}
               textColor="#F6F1FB"
             >
               LOG IN
@@ -129,7 +156,8 @@ const styles = StyleSheet.create({
   signUpLink: { color: '#157AA2', fontSize: 13, textDecorationLine: 'underline' },
   input: { marginBottom: 15, backgroundColor: '#f2f2f7', borderRadius: 10 },
   loginBtn: { marginTop: 10, borderRadius: 25, backgroundColor: '#46bdec', paddingVertical: 6 },
-  forgot: { textAlign: 'center', marginTop: 20, color: '#888' }
+  forgot: { textAlign: 'center', marginTop: 20, color: '#888' },
+  errorText: { color: '#ff0000', fontSize: 13, marginBottom: 10, textAlign: 'center' }
 });
 
 export default LoginScreen;

@@ -6,34 +6,32 @@ import { useNavigation, TabActions } from "@react-navigation/native";
 import QueueCard from "../../components/QueueCard";
 import EmptyState from "../../components/EmptyState";
 import TabSelector from "../../components/TabSelector";
-import { MOCK_ACTIVE_QUEUES, MOCK_HISTORY_QUEUES, Queue } from "../../src/constants/mockData";
+import { Queue } from "../../src/constants/mockData";
+import { useQueue } from "../../src/context/QueueContext";
 
 export default function MyQueue() {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState<"active" | "history">("active");
-  const [activeQueues, setActiveQueues] = useState<Queue[]>(MOCK_ACTIVE_QUEUES);
+  const { activeQueues, historyQueues, removeQueue } = useQueue();
 
   const handleCancelQueue = (id: string) => {
-    setActiveQueues(activeQueues.filter((queue) => queue.id !== id));
+    removeQueue(id);
   };
 
   const handleViewLive = (queue: Queue) => {
-    (navigation.navigate as any)("Screens", { 
-      screen: 'LiveQueue', 
-      params: {
-        restaurant: {
-          name: queue.restaurantName,
-          cuisine: queue.queueType || "Restaurant",
-        },
-        queueData: {
-          queueNumber: parseInt(queue.queueNumber || "0"),
-          partySize: queue.partySize,
-          queueType: queue.queueType,
-          joinedAt: queue.joinedAt,
-          phone: queue.phone,
-          notes: queue.notes,
-        },
-      }
+    (navigation.navigate as any)("ViewLive", { 
+      restaurant: {
+        name: queue.restaurantName,
+        cuisine: queue.queueType || "Restaurant",
+      },
+      queueData: {
+        queueNumber: parseInt(queue.queueNumber || "0"),
+        partySize: queue.partySize,
+        queueType: queue.queueType,
+        joinedAt: queue.joinedAt,
+        phone: queue.phone,
+        notes: queue.notes,
+      },
     });
   };
 
@@ -45,10 +43,32 @@ export default function MyQueue() {
     navigation.dispatch(TabActions.jumpTo('QRScan'));
   };
 
-  const displayQueues = activeTab === "active" ? activeQueues : MOCK_HISTORY_QUEUES;
+  const displayQueues = activeTab === "active" ? activeQueues : historyQueues;
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }} >
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      {/* Header */}
+      <View style={{ backgroundColor: "white", borderBottomWidth: 1, borderBottomColor: "#e5e7eb" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 8, minHeight: 56 }}>
+          <IconButton
+            icon="arrow-left"
+            size={24}
+            onPress={() => navigation.goBack()}
+            iconColor="#000"
+            style={{ margin: 0, padding: 0 }}
+          />
+          <Text style={{ fontSize: 18, fontWeight: "bold", color: "#111827" }}>
+            My Queues
+          </Text>
+          <IconButton
+            icon="bell-outline"
+            size={24}
+            onPress={() => (navigation.navigate as any)("Notifications")}
+            iconColor="#000"
+            style={{ margin: 0, padding: 0 }}
+          />
+        </View>
+      </View>
 
       {/* Tab Selector */}
       <TabSelector
@@ -81,6 +101,6 @@ export default function MyQueue() {
           )}
         </ScrollView>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { Text, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { IconButton } from "react-native-paper";
 import HomePage from '../../app/screens/HomePage';
 import MyQueue from '../../app/screens/MyQueue';
@@ -30,10 +30,10 @@ export default function BottomTabs() {
                 name="HomePage"
                 component={HomePage}
                 options={{
-                    tabBarIcon: ({ focused, color, size }) => (
+                    tabBarIcon: ({ focused, color, size }: any) => (
                         <Entypo name="home" size={focused ? size + 2 : size} color={color} />
                     ),
-                    tabBarLabel: ({ focused, color }) => (
+                    tabBarLabel: ({ focused, color }: any) => (
                         <Text
                             style={{
                                 color,
@@ -44,7 +44,7 @@ export default function BottomTabs() {
                         </Text>
                     ),
                     headerShown: true,
-                    header: ({ navigation }) => (
+                    header: ({ navigation }: any) => (
                         <View style={{ paddingTop: 28, backgroundColor: 'white' }}>
                             <View
                                 style={{
@@ -59,7 +59,7 @@ export default function BottomTabs() {
                                 <IconButton
                                     icon="menu"
                                     size={24}
-                                    onPress={() => console.log("Menu pressed")}
+                                    onPress={() => navigation.navigate("Account" as never)}
                                     iconColor="#000"
                                     style={{ margin: 0, padding: 0 }}
                                 />
@@ -82,10 +82,10 @@ export default function BottomTabs() {
                 name="QRScan"
                 component={QR}
                 options={{
-                    tabBarIcon: ({ focused, color, size }) => (
+                    tabBarIcon: ({ focused, color, size }: any) => (
                         <Ionicons name="scan" size={focused ? size + 2 : size} color={color} />
                     ),
-                    tabBarLabel: ({ focused, color }) => (
+                    tabBarLabel: ({ focused, color }: any) => (
                         <Text
                             style={{
                                 color,
@@ -96,7 +96,7 @@ export default function BottomTabs() {
                         </Text>
                     ),
                     headerShown: true,
-                    header: ({ navigation }) => (
+                    header: ({ navigation }: any) => (
                         <View style={{ paddingTop: 28, backgroundColor: 'white' }}>
                             <View
                                 style={{
@@ -123,10 +123,10 @@ export default function BottomTabs() {
                 name="MyQueues"
                 component={MyQueue}
                 options={{
-                    tabBarIcon: ({ focused, color, size }) => (
+                    tabBarIcon: ({ focused, color, size }: any) => (
                         <Ionicons name="time" size={focused ? size + 2 : size} color={color} />
                     ),
-                    tabBarLabel: ({ focused, color }) => (
+                    tabBarLabel: ({ focused, color }: any) => (
                         <Text
                             style={{
                                 color,
@@ -137,7 +137,7 @@ export default function BottomTabs() {
                         </Text>
                     ),
                     headerShown: true,
-                    header: ({ navigation }) => (
+                    header: ({ navigation }: any) => (
                         <View style={{ paddingTop: 28, backgroundColor: 'white' }}>
                             <View
                                 style={{

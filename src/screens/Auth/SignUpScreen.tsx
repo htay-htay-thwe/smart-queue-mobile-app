@@ -82,7 +82,7 @@ const SignUpPage = ({ navigation }: any) => {
           onSubmitEditing={Keyboard.dismiss}
         />
 
-        <Button mode="contained" style={styles.startBtn} onPress={() => {}}>
+        <Button mode="contained" style={styles.startBtn} onPress={() => navigation.navigate('Login')}>
           GET STARTED
         </Button>
       </View>

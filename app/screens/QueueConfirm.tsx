@@ -1,12 +1,15 @@
 import { View, Text, Image, ScrollView } from "react-native";
 import { Button, IconButton } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, CommonActions } from "@react-navigation/native";
+import { useQueue } from "../../src/context/QueueContext";
+import { useEffect } from "react";
 
 export default function QueueConfirm() {
   const navigation = useNavigation();
   const route = useRoute();
   const queueData = (route.params as any)?.queueData;
+  const { addQueue } = useQueue();
 
   // Generate queue number based on queue type
   const getQueueNumber = () => {
@@ -31,6 +34,12 @@ export default function QueueConfirm() {
     phone: queueData?.phone,
     notes: queueData?.notes,
   });
+
+  // Add queue to context when component mounts
+  useEffect(() => {
+    const newQueue = createQueueData();
+    addQueue(newQueue);
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 16 }}>
@@ -271,7 +280,8 @@ export default function QueueConfirm() {
           <Button
             mode="contained"
             onPress={() => {
-              navigation.navigate("MainTabs" as never, { screen: "MyQueues" } as never);
+              // @ts-expect-error - Navigation types
+              navigation.navigate('MyQueue');
             }}
             style={{
               backgroundColor: "#17a2b8",
@@ -287,7 +297,24 @@ export default function QueueConfirm() {
           <Button
             mode="outlined"
             onPress={() => {
-              navigation.navigate("MainTabs" as never, { screen: "HomePage" } as never);
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: 'Home',
+                      state: {
+                        routes: [
+                          { name: 'HomePage' },
+                          { name: 'QRScan' },
+                          { name: 'MyQueues' },
+                        ],
+                        index: 0, // Navigate to HomePage tab (index 0)
+                      },
+                    },
+                  ],
+                })
+              );
             }}
             style={{
               borderColor: "#17a2b8",
